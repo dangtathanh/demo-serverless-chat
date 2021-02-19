@@ -146,6 +146,8 @@ namespace app_server
                 var endpoint = $"https://{domainName}/{stage}";
                 context.Logger.LogLine($"API Gateway management endpoint: {endpoint}");
 
+                context.Logger.LogLine($"Client '{request.RequestContext.ConnectionId}' send a message: {request.Body}.");
+
                 // The body will look something like this: {"message":"sendmessage", "data":"What are you doing?"}
                 JsonDocument message = JsonDocument.Parse(request.Body);
 
@@ -161,7 +163,7 @@ namespace app_server
                 }
 
                 var connectionId = request.RequestContext.ConnectionId;
-                var messageBody = dataProperty.GetString();
+                string messageBody = JsonConvert.SerializeObject(dataProperty);
 
                 var msg = JsonConvert.DeserializeObject<Message>(messageBody);
                 var sentOn = DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc));
